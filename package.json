@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "tsx watch --env-file=.env src/server.ts",
-    "start": "node dist/server.js"
+    "start": "node dist/server.js",
+    "format": "biome format --write"
   },
   "keywords": [],
   "author": "",
@@ -18,6 +19,11 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
-    "fastify": "^5.7.2"
+    "@fastify/cors": "^11.2.0",
+    "@fastify/swagger": "^9.6.1",
+    "@scalar/fastify-api-reference": "^1.43.17",
+    "fastify": "^5.7.2",
+    "fastify-type-provider-zod": "^6.1.0",
+    "zod": "^4.3.6"
   }
 }
