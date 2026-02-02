@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@fastify/cors": "^11.2.0",
+    "@fastify/sensible": "^6.0.4",
     "@fastify/swagger": "^9.6.1",
     "@scalar/fastify-api-reference": "^1.43.17",
     "fastify": "^5.7.2",

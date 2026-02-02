@@ -8,6 +8,7 @@ import {
 import { fastifySwagger } from '@fastify/swagger'
 import { fastifyCors } from '@fastify/cors'
 import ScalarApiReference from '@scalar/fastify-api-reference'
+import sensible from '@fastify/sensible'
 
 import { authPlugin } from './plugins/auth'
 import { authRoutes } from './modules/auth/routes'
@@ -18,6 +19,8 @@ export const app = fastify().withTypeProvider<ZodTypeProvider>()
 
 app.setValidatorCompiler(validatorCompiler)
 app.setSerializerCompiler(serializerCompiler)
+
+app.register(sensible)
 
 app.register(fastifyCors, {
   origin: true,
@@ -37,8 +40,10 @@ app.register(fastifySwagger, {
   transform: jsonSchemaTransform,
 })
 
+// PLUGINS
 app.register(authPlugin)
 
+// ROUTES
 app.get('/health', (request, reply) => {
   reply.status(200).send({ message: 'OK' })
 })
