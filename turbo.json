@@ -1,0 +1,18 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "envMode": "loose",
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", ".next/**"]
+    },
+    "start:dev": {
+      "dependsOn": ["^build"],
+      "persistent": true
+    },
+    "format": {
+      "dependsOn": ["^build"]
+    },
+    
+  }
+}

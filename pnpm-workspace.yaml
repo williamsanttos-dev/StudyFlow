@@ -1,0 +1,11 @@
+packages:
+  - 'apps/*'
+  - 'packages/*'
+
+# uma forma de linkar uma versão específica em todos os packages dos projetos
+catalog:
+  '@biomejs/biome': 2.3.13
+  '@types/node': 25.1.0
+  typescript: 5.9.3
+
+injectWorkspacePackages: true

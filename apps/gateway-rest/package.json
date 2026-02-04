@@ -1,0 +1,32 @@
+{
+  "name": "gateway-rest",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start:dev": "tsx watch --env-file=.env src/server.ts",
+    "start": "node dist/server.js",
+    "format": "biome format --write"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.28.2",
+  "devDependencies": {
+    "@biomejs/biome": "catalog:",
+    "@types/node": "catalog:",
+    "config": "workspace:*",
+    "tsx": "^4.21.0",
+    "typescript": "catalog:"
+  },
+  "dependencies": {
+    "@fastify/cors": "^11.2.0",
+    "@fastify/sensible": "^6.0.4",
+    "@fastify/swagger": "^9.6.1",
+    "@scalar/fastify-api-reference": "^1.43.17",
+    "fastify": "^5.7.2",
+    "fastify-plugin": "^5.1.0",
+    "fastify-type-provider-zod": "^6.1.0",
+    "zod": "^4.3.6"
+  }
+}
