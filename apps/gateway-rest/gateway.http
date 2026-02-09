@@ -9,15 +9,17 @@ Content-Type: application/json
     "username": "william123",
     "email": "william123@gmail.com",
     "password": "William123",
-    "age": 18
+    "birthDate": "2005-02-24"
 }
 
 ### POST
 POST http://localhost:3333/v1/auth/login
 Content-Type: application/json
+X-Client-Type: mobile
 
 {
     "email": "william123@gmail.com",
     "password": "William123"
 
 }
+

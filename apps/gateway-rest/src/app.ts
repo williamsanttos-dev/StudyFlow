@@ -1,55 +1,65 @@
-import { fastify } from 'fastify'
+import { fastify, FastifyInstance } from "fastify";
 import {
-  serializerCompiler,
-  validatorCompiler,
-  jsonSchemaTransform,
-  type ZodTypeProvider,
-} from 'fastify-type-provider-zod'
-import { fastifySwagger } from '@fastify/swagger'
-import { fastifyCors } from '@fastify/cors'
-import ScalarApiReference from '@scalar/fastify-api-reference'
-import sensible from '@fastify/sensible'
+	serializerCompiler,
+	validatorCompiler,
+	jsonSchemaTransform,
+	type ZodTypeProvider,
+} from "fastify-type-provider-zod";
+import { fastifySwagger } from "@fastify/swagger";
+import { fastifyCors } from "@fastify/cors";
+import ScalarApiReference from "@scalar/fastify-api-reference";
+import sensible from "@fastify/sensible";
+import cookie from "@fastify/cookie";
 
-import { authPlugin } from './plugins/auth'
-import { authRoutes } from './modules/auth/routes'
-import { topicRoutes } from './modules/topics/routes'
-import { subTopicsRoutes } from './modules/subtopics/routes'
+import { authPlugin } from "./plugins/auth";
+import { registerUserHandler } from "./modules/auth/register-user.handler";
+import { loginHandler } from "./modules/auth/login.handler";
+import { refreshTokenHandler } from "./modules/auth/refresh-token.handler";
+import { logoutHandler } from "./modules/auth/logout.handler";
+import { fetchUserHandler } from "./modules/auth/fetch-user.handler";
 
-export const app = fastify().withTypeProvider<ZodTypeProvider>()
+export const app = fastify().withTypeProvider<ZodTypeProvider>();
 
-app.setValidatorCompiler(validatorCompiler)
-app.setSerializerCompiler(serializerCompiler)
+app.setValidatorCompiler(validatorCompiler);
+app.setSerializerCompiler(serializerCompiler);
 
-app.register(sensible)
+app.register(sensible);
 
 app.register(fastifyCors, {
-  origin: true,
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  // credentials: true,
-  // credentials or JWT sessions?
-})
+	origin: true, // don't have interaction with browser for now
+	methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+	credentials: true,
+	// credentials or JWT sessions?
+});
+
+app.register(cookie, { secret: process.env.COOKIE_SECRET });
 
 app.register(fastifySwagger, {
-  openapi: {
-    info: {
-      title: 'Study Flow API',
-      description: 'API for monitor progress in studies',
-      version: '1.0.0',
-    },
-  },
-  transform: jsonSchemaTransform,
-})
+	openapi: {
+		info: {
+			title: "Study Flow API",
+			description: "API for monitor progress in studies",
+			version: "1.0.0",
+		},
+	},
+	transform: jsonSchemaTransform,
+});
 
-// PLUGINS
-app.register(authPlugin)
+// PUBLIC ROUTES
+app.post("/v1/auth/register", registerUserHandler);
+app.post("/v1/auth/login", loginHandler);
+app.post("/v1/auth/refresh", refreshTokenHandler);
 
-// ROUTES
-app.get('/health', (request, reply) => {
-  reply.status(200).send({ message: 'OK' })
-})
 app.register(ScalarApiReference, {
-  routePrefix: '/docs',
-})
-app.register(authRoutes, { prefix: '/v1/auth' })
-app.register(topicRoutes, { prefix: 'v1/topics' })
-app.register(subTopicsRoutes, { prefix: '/1/subtopics' })
+	routePrefix: "/docs",
+});
+
+// PRIVATE ROUTES
+app.register(async (fastify: FastifyInstance) => {
+	fastify.register(authPlugin);
+
+	fastify.post("/v1/auth/logout", logoutHandler);
+	fastify.get("/v1/auth/me", fetchUserHandler);
+
+	// fastify.post("/v1/graphql")
+});
