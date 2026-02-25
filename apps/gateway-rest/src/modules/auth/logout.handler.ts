@@ -1,8 +1,10 @@
 import type { FastifyRequest, FastifyReply } from "fastify";
 import { isNull, and, eq } from "drizzle-orm";
 
-import { db } from "@/db";
-import { refreshTokens } from "@/db/schemas/refresh";
+// my package
+import { db } from "db";
+import { refreshTokens } from "db/schema"
+
 import { app } from "@/app";
 
 export async function logoutHandler(

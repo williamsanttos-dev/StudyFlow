@@ -1,5 +1,7 @@
 import { app } from "./app";
-import { testNow } from "./db";
+
+// my package
+import { testNow } from "db";
 
 async function bootstrap() {
 	try {
@@ -11,13 +13,13 @@ async function bootstrap() {
 		process.exit(1); // fast-fail
 	}
 
-	app.get("/health", (request, reply) => {
+	app.get("/health", (_request, reply) => {
 		return reply.status(200).send({ status: "UP", db: "UP" });
 	});
 
 	await app.listen({ port: 3333, host: "0.0.0.0" });
 
-	console.log("Server running 🚀");
+	console.log("🚀 Server running");
 	console.log("Health check available at http://localhost:3333/health");
 	console.log("Docs available at http://localhost:3333/docs");
 }

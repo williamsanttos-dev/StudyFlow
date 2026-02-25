@@ -3,8 +3,10 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { eq, and, isNull } from "drizzle-orm";
 
-import { db } from "@/db";
-import { refreshTokens } from "@/db/schemas/refresh";
+// my package
+import { db } from "db";
+import { refreshTokens } from "db/schema"
+
 import { app } from "@/app";
 
 const X_CLIENT_TYPE = {

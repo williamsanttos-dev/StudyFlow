@@ -3,10 +3,11 @@
 
 	"compilerOptions": {
 		"paths": {
-			"@/*": ["./src/*"]
+			"@/*": ["./src/*"],
+			"@db/*": ["../../packages/db/*"]
 		},
 
 		"outDir": "./dist"
 	},
-	"include": ["src/**/*.ts", "src/types/*.d.ts", "./drizzle.config.ts"]
+	"include": ["src/**/*.ts", "src/types/*.d.ts"]
 }

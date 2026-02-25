@@ -4,8 +4,8 @@
 	"description": "",
 	"main": "index.js",
 	"scripts": {
-		"start:dev": "tsx watch --env-file=.env src/bootstrap.ts",
-		"start": "node dist/bootstrap.js",
+		"start:dev": "tsx watch --env-file=.env src/server.ts",
+		"start": "node dist/server.js",
 		"format": "biome format --write"
 	},
 	"keywords": [],
@@ -20,6 +20,7 @@
 		"@types/pg": "^8.16.0",
 		"config": "workspace:*",
 		"drizzle-kit": "^0.31.8",
+		"db": "workspace:*",
 		"tsx": "^4.21.0",
 		"typescript": "catalog:"
 	},

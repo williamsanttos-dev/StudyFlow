@@ -5,5 +5,6 @@ declare namespace NodeJS {
 		SECRET_ACCESS_TOKEN: string;
 		SECRET_REFRESH_TOKEN: string;
 		COOKIE_SECRET: string;
+		GRAPHQL_API_URL: string;
 	}
 }

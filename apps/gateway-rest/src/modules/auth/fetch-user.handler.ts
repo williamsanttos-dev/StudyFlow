@@ -1,9 +1,11 @@
 import type { FastifyRequest, FastifyReply } from "fastify";
 import { eq } from "drizzle-orm";
 
+// my package
+import { db } from "db";
+import { usersTable as users } from "db/schema"
+
 import { app } from "@/app";
-import { db } from "@/db";
-import { usersTable as users } from "@/db/schemas/users";
 import { UserResponseDTO } from "./dto/user.response";
 
 export async function fetchUserHandler(

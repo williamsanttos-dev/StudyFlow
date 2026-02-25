@@ -17,6 +17,7 @@ import { loginHandler } from "./modules/auth/login.handler";
 import { refreshTokenHandler } from "./modules/auth/refresh-token.handler";
 import { logoutHandler } from "./modules/auth/logout.handler";
 import { fetchUserHandler } from "./modules/auth/fetch-user.handler";
+import { graphql } from "./clients/graphql";
 
 export const app = fastify().withTypeProvider<ZodTypeProvider>();
 
@@ -45,14 +46,14 @@ app.register(fastifySwagger, {
 	transform: jsonSchemaTransform,
 });
 
-// PUBLIC ROUTES
-app.post("/v1/auth/register", registerUserHandler);
-app.post("/v1/auth/login", loginHandler);
-app.post("/v1/auth/refresh", refreshTokenHandler);
-
 app.register(ScalarApiReference, {
 	routePrefix: "/docs",
 });
+
+// // PUBLIC ROUTES
+app.post("/v1/auth/register", registerUserHandler);
+app.post("/v1/auth/login", loginHandler);
+app.post("/v1/auth/refresh", refreshTokenHandler);
 
 // PRIVATE ROUTES
 app.register(async (fastify: FastifyInstance) => {
@@ -60,6 +61,5 @@ app.register(async (fastify: FastifyInstance) => {
 
 	fastify.post("/v1/auth/logout", logoutHandler);
 	fastify.get("/v1/auth/me", fetchUserHandler);
-
-	// fastify.post("/v1/graphql")
+	fastify.post("/v1/graphql", graphql);
 });
