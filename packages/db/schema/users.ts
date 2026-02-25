@@ -6,6 +6,9 @@ import {
 	uuid,
 	timestamp,
 } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
+
+import { topics } from "./topics";
 
 export const usersTable = pgTable("users", {
 	id: uuid().defaultRandom().primaryKey(),
@@ -21,3 +24,8 @@ export const usersTable = pgTable("users", {
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 	updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
+
+// User -> many topics
+export const usersRelations = relations(usersTable, ({ many }) => ({
+	topics: many(topics),
+}))

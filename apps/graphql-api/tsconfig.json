@@ -2,12 +2,14 @@
 	"extends": "../../packages/config/tsconfig.json",
 
 	"compilerOptions": {
+		"emitDecoratorMetadata": true,
+		"experimentalDecorators": true,
+
 		"paths": {
 			"@/*": ["./src/*"],
 			"@db/*": ["../../packages/db/*"]
 		},
 
-		"outDir": "./dist"
-	},
-	"include": ["src/**/*.ts", "src/types/*.d.ts"]
+		"strictPropertyInitialization": false
+	}
 }
