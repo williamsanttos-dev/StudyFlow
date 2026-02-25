@@ -8,6 +8,6 @@
         "emitDeclarationOnly": false
     },
 
-    "include": ["index.ts", "schema/**/*.ts", "types/**/*.d.ts", "index.ts"]
+    "include": ["index.ts", "schema/**/*.ts", "types/**/*.d.ts", "drizzle.config.ts", "index.ts"]
 
 }

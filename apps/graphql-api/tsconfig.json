@@ -1,0 +1,15 @@
+{
+	"extends": "../../packages/config/tsconfig.json",
+
+	"compilerOptions": {
+		"emitDecoratorMetadata": true,
+		"experimentalDecorators": true,
+
+		"paths": {
+			"@/*": ["./src/*"],
+			"@db/*": ["../../packages/db/*"]
+		},
+
+		"strictPropertyInitialization": false
+	}
+}
