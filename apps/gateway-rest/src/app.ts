@@ -11,6 +11,8 @@ import ScalarApiReference from "@scalar/fastify-api-reference";
 import sensible from "@fastify/sensible";
 import cookie from "@fastify/cookie";
 
+import { db } from "db";
+
 import { authPlugin } from "./plugins/auth";
 import { registerUserHandler } from "./modules/auth/register-user.handler";
 import { loginHandler } from "./modules/auth/login.handler";
@@ -18,6 +20,14 @@ import { refreshTokenHandler } from "./modules/auth/refresh-token.handler";
 import { logoutHandler } from "./modules/auth/logout.handler";
 import { fetchUserHandler } from "./modules/auth/fetch-user.handler";
 import { graphql } from "./clients/graphql";
+import { AppError } from "./errors/AppError";
+import { DrizzleTransactionManager } from "./modules/auth/transaction/transaction-manager";
+import { AuthService } from "./modules/auth/services/auth.service";
+import { DrizzleUserRepository } from "./modules/auth/repositories/user.repository";
+import { DrizzleRefreshTokenRepository } from "./modules/auth/repositories/refresh-token.repository";
+import { BcryptHashProvider } from "./modules/auth/providers/hash.provider";
+import { JwtTokenProvider } from "./modules/auth/providers/token.provider";
+import { LoginController } from "./modules/auth/controllers/login.controller";
 
 export const app = fastify().withTypeProvider<ZodTypeProvider>();
 
@@ -35,6 +45,22 @@ app.register(fastifyCors, {
 
 app.register(cookie, { secret: process.env.COOKIE_SECRET });
 
+app.setErrorHandler((error, _request, reply) => {
+	if (error instanceof AppError) {
+		return reply.status(error.statusCode).send({
+			code: error.code,
+			message: error.message,
+		});
+	}
+	// analisar
+	console.error(error);
+
+	return reply.status(500).send({
+		code: "INTERNAL_SERVER_ERROR",
+		message: "Internal server error",
+	});
+});
+
 app.register(fastifySwagger, {
 	openapi: {
 		info: {
@@ -50,9 +76,29 @@ app.register(ScalarApiReference, {
 	routePrefix: "/docs",
 });
 
+// Infra
+const transactionManager = new DrizzleTransactionManager(db);
+
+// Repository
+const userRepository = new DrizzleUserRepository(db);
+const refreshRepository = new DrizzleRefreshTokenRepository(db);
+
+// Service
+const authService = new AuthService(
+	userRepository,
+	refreshRepository,
+	new BcryptHashProvider(),
+	new JwtTokenProvider(),
+	transactionManager,
+);
+
+// Controller
+const loginController = new LoginController(authService);
+
 // // PUBLIC ROUTES
+// app.post("/v1/auth/login", loginHandler);
+app.post("/v1/auth/login", loginController.handler);
 app.post("/v1/auth/register", registerUserHandler);
-app.post("/v1/auth/login", loginHandler);
 app.post("/v1/auth/refresh", refreshTokenHandler);
 
 // PRIVATE ROUTES
