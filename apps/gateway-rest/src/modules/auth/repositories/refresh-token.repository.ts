@@ -31,7 +31,9 @@ export class DrizzleRefreshTokenRepository implements IRefreshTokenRepository {
 			.set({
 				revokedAt: new Date(Date.now()),
 			})
-			.where(eq(refreshTokens.userId, userId));
+			.where(
+				and(eq(refreshTokens.userId, userId), isNull(refreshTokens.revokedAt)),
+			);
 	}
 	async getTokenNotRevokedByUserId(
 		userId: string,

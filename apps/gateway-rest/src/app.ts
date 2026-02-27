@@ -31,6 +31,7 @@ import { LoginController } from "./modules/auth/controllers/login.controller";
 import { DrizzleUserRepositoryFactory } from "./modules/auth/factory/user.repository.factory";
 import { DrizzleRefreshTokenRepositoryFactory } from "./modules/auth/factory/refresh-token.repository.factory";
 import { RefreshController } from "./modules/auth/controllers/refresh.controller";
+import { LogoutController } from "./modules/auth/controllers/logout.controller";
 
 export const app = fastify().withTypeProvider<ZodTypeProvider>();
 
@@ -85,11 +86,13 @@ const transactionManager = new DrizzleTransactionManager(db);
 // Repository
 const userRepositoryFactory = new DrizzleUserRepositoryFactory();
 const refreshRepositoryFactory = new DrizzleRefreshTokenRepositoryFactory();
+const refreshRepository = new DrizzleRefreshTokenRepository(db);
 
 // Service
 const authService = new AuthService(
 	userRepositoryFactory,
 	refreshRepositoryFactory,
+	refreshRepository,
 	new BcryptHashProvider(),
 	new JwtTokenProvider(),
 	transactionManager,
@@ -98,6 +101,7 @@ const authService = new AuthService(
 // Controller
 const loginController = new LoginController(authService);
 const refreshController = new RefreshController(authService);
+const logoutController = new LogoutController(authService);
 
 // // PUBLIC ROUTES
 // app.post("/v1/auth/login", loginHandler);
@@ -109,7 +113,7 @@ app.post("/v1/auth/refresh", refreshController.handler);
 app.register(async (fastify: FastifyInstance) => {
 	fastify.register(authPlugin);
 
-	fastify.post("/v1/auth/logout", logoutHandler);
+	fastify.post("/v1/auth/logout", logoutController.handler);
 	fastify.get("/v1/auth/me", fetchUserHandler);
 	fastify.post("/v1/graphql", graphql);
 });

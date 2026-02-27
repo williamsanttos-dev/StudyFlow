@@ -6,6 +6,7 @@ import { InvalidCredentialsError } from "@/errors/InvalidCredentialsError";
 import { TokenInvalidError } from "@/errors/TokenInvalidError";
 import type { IUserRepositoryFactory } from "../factory/user.repository.factory.interface";
 import type { IRefreshTokenRepositoryFactory } from "../factory/refresh-token.repository.factory.interface";
+import { IRefreshTokenRepository } from "../interfaces/refresh-token.repository.interface";
 
 type AuthTokens = {
 	accessToken: string;
@@ -22,6 +23,7 @@ export class AuthService implements IAuthService {
 	constructor(
 		private userRepositoryFactory: IUserRepositoryFactory,
 		private refreshRepositoryFactory: IRefreshTokenRepositoryFactory,
+		private refreshRepository: IRefreshTokenRepository,
 		private hashProvider: BcryptHashProvider,
 		private tokenProvider: JwtTokenProvider,
 		private transactionManager: DrizzleTransactionManager,
@@ -89,5 +91,8 @@ export class AuthService implements IAuthService {
 
 			return { accessToken: newAccessToken, refreshToken: newRefreshToken };
 		});
+	}
+	async logout(userId: string): Promise<void> {
+		return await this.refreshRepository.setRevokedByUserId(userId);
 	}
 }

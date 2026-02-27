@@ -51,6 +51,7 @@ describe("AuthService", () => {
 		authService = new AuthService(
 			mockUserRepositoryFactory as any,
 			mockRefreshRepositoryFactory as any,
+			mockRefreshRepo as any,
 			mockHashProvider as any,
 			mockTokenProvider as any,
 			mockTransactionManager as any,
@@ -224,6 +225,25 @@ describe("AuthService", () => {
 
 			await expect(authService.refresh("wrong-token")).rejects.toThrow(
 				TokenInvalidError,
+			);
+		});
+	});
+	describe("AuthService - logout", () => {
+		it("should call setRevokedByUserId with correct userId", async () => {
+			mockRefreshRepo.setRevokedByUserId.mockResolvedValue(undefined);
+
+			await authService.logout("user-1");
+
+			expect(mockRefreshRepo.setRevokedByUserId).toHaveBeenCalledWith("user-1");
+			expect(mockRefreshRepo.setRevokedByUserId).toHaveBeenCalledTimes(1);
+		});
+		it("should propagate repository errors", async () => {
+			mockRefreshRepo.setRevokedByUserId.mockRejectedValue(
+				new Error("database error"),
+			);
+
+			await expect(authService.logout("user-1")).rejects.toThrow(
+				"database error",
 			);
 		});
 	});
