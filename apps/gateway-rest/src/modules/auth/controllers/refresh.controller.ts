@@ -1,29 +1,26 @@
 import type { FastifyRequest, FastifyReply } from "fastify";
-
-import { loginSchema } from "../auth.schemas";
-import type { AuthService } from "../services/auth.service";
+import { AuthService } from "../services/auth.service";
+import { TokenInvalidError } from "@/errors/TokenInvalidError";
 import { X_CLIENT_TYPE } from "@/types/const/x-client-type";
 
-export class LoginController {
+export class RefreshController {
 	constructor(private authService: AuthService) {}
 
 	handler = async (request: FastifyRequest, reply: FastifyReply) => {
-		const parsed = loginSchema.safeParse(request.body);
+		const refreshTokenReq =
+			request.cookies.refresh_token ??
+			request.headers.authorization?.split(" ")[1];
 
-		if (!parsed.success)
-			return reply.status(400).send({ message: "INVALID_CREDENTIALS" });
+		if (!refreshTokenReq) throw new TokenInvalidError();
 
-		const { email, password } = parsed.data;
+		const { accessToken, refreshToken } =
+			await this.authService.refresh(refreshTokenReq);
 
-		const result = await this.authService.login(email, password);
-
-		const { accessToken, refreshToken } = result;
-
+		// verify the "type" of the client
 		if (request.headers["x-client-type"] === X_CLIENT_TYPE.mobile)
-			return reply
-				.status(200)
-				.send({ accessToken: accessToken, refreshToken: refreshToken });
+			return reply.status(200).send({ accessToken, refreshToken });
 
+		// if the client is "web", is sended cookies
 		return reply
 			.setCookie("access_token", accessToken, {
 				httpOnly: true,

@@ -28,6 +28,9 @@ import { DrizzleRefreshTokenRepository } from "./modules/auth/repositories/refre
 import { BcryptHashProvider } from "./modules/auth/providers/hash.provider";
 import { JwtTokenProvider } from "./modules/auth/providers/token.provider";
 import { LoginController } from "./modules/auth/controllers/login.controller";
+import { DrizzleUserRepositoryFactory } from "./modules/auth/factory/user.repository.factory";
+import { DrizzleRefreshTokenRepositoryFactory } from "./modules/auth/factory/refresh-token.repository.factory";
+import { RefreshController } from "./modules/auth/controllers/refresh.controller";
 
 export const app = fastify().withTypeProvider<ZodTypeProvider>();
 
@@ -80,13 +83,13 @@ app.register(ScalarApiReference, {
 const transactionManager = new DrizzleTransactionManager(db);
 
 // Repository
-const userRepository = new DrizzleUserRepository(db);
-const refreshRepository = new DrizzleRefreshTokenRepository(db);
+const userRepositoryFactory = new DrizzleUserRepositoryFactory();
+const refreshRepositoryFactory = new DrizzleRefreshTokenRepositoryFactory();
 
 // Service
 const authService = new AuthService(
-	userRepository,
-	refreshRepository,
+	userRepositoryFactory,
+	refreshRepositoryFactory,
 	new BcryptHashProvider(),
 	new JwtTokenProvider(),
 	transactionManager,
@@ -94,12 +97,13 @@ const authService = new AuthService(
 
 // Controller
 const loginController = new LoginController(authService);
+const refreshController = new RefreshController(authService);
 
 // // PUBLIC ROUTES
 // app.post("/v1/auth/login", loginHandler);
 app.post("/v1/auth/login", loginController.handler);
 app.post("/v1/auth/register", registerUserHandler);
-app.post("/v1/auth/refresh", refreshTokenHandler);
+app.post("/v1/auth/refresh", refreshController.handler);
 
 // PRIVATE ROUTES
 app.register(async (fastify: FastifyInstance) => {
