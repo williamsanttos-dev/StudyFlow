@@ -41,4 +41,21 @@ export class DrizzleUserRepository implements IUserRepository {
 				throw new ConflictError("Email or username already in use");
 		}
 	}
+
+	async findById(id: string): Promise<User | null> {
+		const result = await this.db.query.usersTable.findFirst({
+			where: eq(users.id, id),
+		});
+
+		if (!result) return null;
+		return {
+			id: result.id,
+			email: result.email,
+			name: result.name,
+			username: result.username,
+			birthDate: result.birthDate,
+			createdAt: result.createdAt,
+			updatedAt: result.updatedAt,
+		};
+	}
 }

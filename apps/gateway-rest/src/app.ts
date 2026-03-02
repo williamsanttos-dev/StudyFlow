@@ -31,6 +31,7 @@ import { LogoutController } from "./modules/auth/controllers/logout.controller";
 import { RegisterController } from "./modules/user/controllers/register.controller";
 import { UserService } from "./modules/user/services/user.service";
 import { DrizzleUserRepository } from "./modules/user/repositories/user.repository";
+import { FetchUser } from "./modules/user/controllers/fetch-user.controller";
 
 export const app = fastify().withTypeProvider<ZodTypeProvider>();
 
@@ -104,17 +105,18 @@ const loginController = new LoginController(authService);
 const refreshController = new RefreshController(authService);
 const logoutController = new LogoutController(authService);
 const registerController = new RegisterController(userService);
+const fetchUserController = new FetchUser(userService);
 
 // // PUBLIC ROUTES
 app.post("/v1/auth/login", loginController.handler);
 app.post("/v1/auth/refresh", refreshController.handler);
-app.post("/v1/user/register", registerController.handler);
+app.post("/v1/users/register", registerController.handler);
 
 // PRIVATE ROUTES
 app.register(async (fastify: FastifyInstance) => {
 	fastify.register(authPlugin);
 
 	fastify.post("/v1/auth/logout", logoutController.handler);
-	fastify.get("/v1/auth/me", fetchUserHandler);
+	fastify.get("/v1/users/me", fetchUserController.handler);
 	fastify.post("/v1/graphql", graphql);
 });

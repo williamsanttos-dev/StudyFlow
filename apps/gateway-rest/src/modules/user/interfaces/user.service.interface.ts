@@ -1,5 +1,7 @@
+import { UserResponseDTO } from "../models/dto/user.response";
 import type { CreateUserDTO } from "../models/user.schema";
 
 export interface IUserService {
 	register(data: CreateUserDTO): Promise<void>;
+	fetchUser(userId: string): Promise<UserResponseDTO>;
 }

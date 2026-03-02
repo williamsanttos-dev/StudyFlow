@@ -14,4 +14,5 @@ export interface IUserRepository {
 		username: string,
 	): Promise<User | null>;
 	insertUser(data: InsertUserPayload): Promise<void>;
+	findById(id: string): Promise<User | null>;
 }

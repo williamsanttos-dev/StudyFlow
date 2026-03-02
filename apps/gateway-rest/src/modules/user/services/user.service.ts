@@ -4,6 +4,7 @@ import { IUserService } from "../interfaces/user.service.interface";
 import { UserResponseDTO } from "../models/dto/user.response";
 import { ConflictError } from "@/errors/ConflictError";
 import { CreateUserDTO } from "../models/user.schema";
+import { NotFoundError } from "@/errors/NotFoundError";
 
 export class UserService implements IUserService {
 	constructor(
@@ -33,5 +34,23 @@ export class UserService implements IUserService {
 			birthDate: data.birthDate,
 			passwordHash: passwordHash,
 		});
+	}
+
+	async fetchUser(userId: string): Promise<UserResponseDTO> {
+		const user = await this.userRepository.findById(userId);
+
+		if (!user) throw new NotFoundError();
+
+		const age = new Date().getFullYear() - user.birthDate.getFullYear();
+
+		return {
+			id: user.id,
+			name: user.name,
+			username: user.username,
+			email: user.email,
+			age: age,
+			createdAt: user.createdAt.toISOString(),
+			updatedAt: user.updatedAt.toISOString(),
+		};
 	}
 }
