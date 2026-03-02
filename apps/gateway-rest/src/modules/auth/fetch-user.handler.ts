@@ -3,10 +3,10 @@ import { eq } from "drizzle-orm";
 
 // my package
 import { db } from "db";
-import { usersTable as users } from "db/schema"
+import { usersTable as users } from "db/schema";
 
 import { app } from "@/app";
-import { UserResponseDTO } from "./dto/user.response";
+import { UserResponseDTO } from "../user/models/dto/user.response";
 
 export async function fetchUserHandler(
 	request: FastifyRequest,

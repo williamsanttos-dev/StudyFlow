@@ -4,12 +4,10 @@ import bcrypt from "bcrypt";
 
 // my package
 import { db } from "db";
-import { usersTable as users } from "db/schema"
+import { usersTable as users } from "db/schema";
 
-import { registerUserSchema } from "./auth.schemas";
 import { app } from "@/app";
-
-
+import { registerUserSchema } from "../user/models/user.schema";
 
 export async function registerUserHandler(
 	request: FastifyRequest,

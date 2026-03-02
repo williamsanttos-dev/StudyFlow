@@ -1,5 +1,5 @@
 import type { IAuthService } from "../interfaces/auth.service.interface";
-import type { BcryptHashProvider } from "../providers/hash.provider";
+import type { BcryptHashProvider } from "@/shared/providers/hash.provider";
 import type { JwtTokenProvider } from "../providers/token.provider";
 import type { DrizzleTransactionManager } from "../transaction/transaction-manager";
 import { InvalidCredentialsError } from "@/errors/InvalidCredentialsError";

@@ -4,7 +4,7 @@ import { IUserRepository } from "../interfaces/user.repository.interface";
 import { usersTable as users } from "db/schema";
 import { eq } from "drizzle-orm";
 
-export class DrizzleUserRepository implements IUserRepository {
+export class DrizzleUserAuthRepository implements IUserRepository {
 	constructor(private readonly db: DrizzleDatabase) {}
 
 	async findAuthUserByEmail(
