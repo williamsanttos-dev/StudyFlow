@@ -14,8 +14,6 @@ import cookie from "@fastify/cookie";
 import { db } from "db";
 
 import { authPlugin } from "./plugins/auth";
-import { registerUserHandler } from "./modules/auth/register-user.handler";
-import { fetchUserHandler } from "./modules/auth/fetch-user.handler";
 import { graphql } from "./clients/graphql";
 import { AppError } from "./errors/AppError";
 import { DrizzleTransactionManager } from "./modules/auth/transaction/transaction-manager";
